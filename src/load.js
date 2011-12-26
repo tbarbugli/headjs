@@ -6,7 +6,7 @@
 
     http://headjs.com
 */
-(function(doc) {
+(function (doc) {
 
   var head = doc.documentElement,
       isHeadReady,
