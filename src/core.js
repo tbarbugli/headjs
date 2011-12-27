@@ -78,7 +78,7 @@
     api.ready.apply(null, arguments);
   };
 
-  api.feature = function(key, enabled, queue) {
+  api.feature = function (key, enabled, queue) {
 
     // internal: apply all classes
     if (!key) {
@@ -134,13 +134,13 @@
     }
 
     // HTML5 support
-    each("abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video".split("|"), function(el) {
+    each("abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video".split("|"), function (el) {
       doc.createElement(el);
     });
   }
 
   // CSS "router"
-  each(location.pathname.split("/"), function(el, i) {
+  each(location.pathname.split("/"), function (el, i) {
 
     if (this.length > 2 && this[i + 1] !== undefined) {
       if (i) {
@@ -173,7 +173,7 @@
     // add new ones
     pushClass("w-" + Math.round(w / 100) * 100);
 
-    each(conf.screens, function(width) {
+    each(conf.screens, function (width) {
       if (w <= width) {
         pushClass("lt-" + width);
       }
