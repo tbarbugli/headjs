@@ -35,6 +35,7 @@
     html.className = html.className.replace(re, '');
   }
 
+  // TODO: Replace with ECMA-262 equivalent
   function each(arr, fn) {
     for (var i = 0, arr_length = arr.length; i < arr_length; i++) {
       fn.call(arr, arr[i], i);
