@@ -15,18 +15,18 @@
       queue = [],        // waiters for the "head ready" event
       handlers = {},     // user functions waiting for events
       scripts = {},      // loadable scripts in different states
-      isAsync = doc.createElement("script").async === true || "MozAppearance" in doc.documentElement.style || window.opera;
+      isAsync = doc.createElement("script").async === true || "MozAppearance" in doc.documentElement.style || window.opera
 
 
   /*** public API ***/
   var head_var = window.head_conf && head_conf.head || "head",
-      api = window[head_var] = (window[head_var] || function() { api.ready.apply(null, arguments); });
+      api = window[head_var] = (window[head_var] || function() { api.ready.apply(null, arguments); })
 
   // states
   var PRELOADED = 1,
       PRELOADING = 2,
       LOADING = 3,
-      LOADED = 4;
+      LOADED = 4
 
 
   // Method 1: simply load and let browser take care of ordering
@@ -36,29 +36,29 @@
 
       var args = arguments,
           fn = args[args.length -1],
-          els = {};
+          els = {}
 
       if (!isFunc(fn)) {
-        fn = null;
+        fn = null
       }
 
       each(args, function (el, i) {
 
         if (el != fn) {
-          el = getScript(el);
-          els[el.name] = el;
+          el = getScript(el)
+          els[el.name] = el
 
           load(el, fn && i == args.length -2 ? function () {
             if (allLoaded(els)) {
-              one(fn);
+              one(fn)
             }
 
-          } : null);
+          } : null)
         }
-      });
+      })
 
-      return api;
-    };
+      return api
+    }
 
 
     // Method 2: preload with text/cache hack
@@ -68,14 +68,14 @@
 
       var args = arguments,
           rest = [].slice.call(args, 1),
-          next = rest[0];
+          next = rest[0]
 
       // wait for a while. immediate execution causes some browsers to ignore caching
       if (!isHeadReady) {
         queue.push(function () {
-          api.js.apply(null, args);
-        });
-        return api;
+          api.js.apply(null, args)
+        })
+        return api
       }
 
       // multiple arguments
@@ -84,64 +84,64 @@
         // load
         each(rest, function (el) {
           if (!isFunc(el)) {
-            preload(getScript(el));
+            preload(getScript(el))
           }
-        });
+        })
 
         // execute
         load(getScript(args[0]), isFunc(next) ? next : function () {
-          api.js.apply(null, rest);
-        });
+          api.js.apply(null, rest)
+        })
 
 
       // single script
       } else {
-        load(getScript(args[0]));
+        load(getScript(args[0]))
       }
 
-      return api;
-    };
+      return api
+    }
   }
 
 
   api.ready = function (key, fn) {
 
-    // DOM ready check: head.ready(document, function() { });
+    // DOM ready check: head.ready(document, function() { })
     if (key == doc) {
       if (isDomReady) {
-        one(fn);
+        one(fn)
       } else {
-        domWaiters.push(fn);
+        domWaiters.push(fn)
       }
-      return api;
+      return api
     }
 
     // shift arguments
     if (isFunc(key)) {
-      fn = key;
-      key = "ALL";
+      fn = key
+      key = "ALL"
     }
 
     // make sure arguments are sane
     if (typeof key != 'string' || !isFunc(fn)) {
-      return api;
+      return api
     }
 
-    var script = scripts[key];
+    var script = scripts[key]
 
       // script already loaded --> execute and return
     if (script && script.state == LOADED || key == 'ALL' && allLoaded() && isDomReady) {
-      one(fn);
-      return api;
+      one(fn)
+      return api
     }
 
-    var arr = handlers[key];
+    var arr = handlers[key]
     if (!arr) {
-      arr = handlers[key] = [fn];
+      arr = handlers[key] = [fn]
     } else {
-      arr.push(fn);
+      arr.push(fn)
     }
-    return api;
+    return api
   };
 
 
@@ -150,12 +150,12 @@
 
     if (allLoaded()) {
       each(handlers.ALL, function (fn) {
-        one(fn);
-      });
+        one(fn)
+      })
     }
 
     if (api.feature) {
-      api.feature("domloaded", true);
+      api.feature("domloaded", true)
     }
   });
 
@@ -165,98 +165,99 @@
   // call function once
   function one(fn) {
     if (fn._done) {
-      return;
+      return
     }
-    fn();
-    fn._done = 1;
+    fn()
+    fn._done = 1
   }
 
 
   function toLabel(url) {
     var els = url.split("/"),
         name = els[els.length -1],
-        i = name.indexOf("?");
+        i = name.indexOf("?")
 
-    return i != -1 ? name.substring(0, i) : name;
+    return i != -1 ? name.substring(0, i) : name
   }
 
 
   function getScript(url) {
 
-    var script;
+    var script
 
     if (typeof url == 'object') {
       for (var key in url) {
         if (url[key]) {
-          script = { name: key, url: url[key] };
+          script = { name: key, url: url[key] }
         }
       }
     } else {
-      script = { name: toLabel(url),  url: url };
+      script = { name: toLabel(url),  url: url }
     }
 
-    var existing = scripts[script.name];
+    var existing = scripts[script.name]
     if (existing && existing.url === script.url) {
-      return existing;
+      return existing
     }
 
-    scripts[script.name] = script;
-    return script;
+    scripts[script.name] = script
+    return script
   }
 
 
   function each(arr, fn) {
-    if (!arr) { return; }
+    if (!arr) { return }
 
     // arguments special type
-    if (typeof arr == 'object') { arr = [].slice.call(arr); }
+    if (typeof arr == 'object')
+      arr = [].slice.call(arr)
 
     // do the job
     for (var i = 0; i < arr.length; i++) {
-      fn.call(arr, arr[i], i);
+      fn.call(arr, arr[i], i)
     }
   }
 
   function isFunc(el) {
-    return Object.prototype.toString.call(el) == '[object Function]';
+    return Object.prototype.toString.call(el) == '[object Function]'
   }
 
   function allLoaded(els) {
 
-    els = els || scripts;
+    els = els || scripts
 
     var loaded;
 
     for (var name in els) {
       if (els.hasOwnProperty(name) && els[name].state != LOADED) {
-        return false;
+        return false
       }
-      loaded = true;
+      loaded = true
     }
 
-    return loaded;
+    return loaded
   }
 
 
   function onPreload(script) {
 
-    script.state = PRELOADED;
+    script.state = PRELOADED
 
     each(script.onpreload, function (el) {
-      el.call();
-    });
+      el.call()
+    })
   }
 
 
   function preload(script, callback) {
 
     if (script.state === undefined) {
-      script.state = PRELOADING;
-      script.onpreload = [];
+      script.state = PRELOADING
+      script.onpreload = []
 
-      scriptTag({ src: script.url, type: 'cache'}, function ()  {
-        onPreload(script);
-      });
+      scriptTag({ src: script.url, type: 'cache'}, function () {
+        onPreload(script)
+      })
     }
   }
 
@@ -264,38 +265,38 @@
   function load(script, callback) {
 
     if (script.state == LOADED) {
-      return callback && callback();
+      return callback && callback()
     }
 
     if (script.state == LOADING) {
-      return api.ready(script.name, callback);
+      return api.ready(script.name, callback)
     }
 
     if (script.state == PRELOADING) {
       return script.onpreload.push(function () {
-        load(script, callback);
+        load(script, callback)
       });
     }
 
-    script.state = LOADING;
+    script.state = LOADING
 
     scriptTag(script.url, function () {
 
-      script.state = LOADED;
+      script.state = LOADED
 
       if (callback) {
-        callback();
+        callback()
       }
 
       // handlers for this script
       each(handlers[script.name], function (fn) {
-        one(fn);
-      });
+        one(fn)
+      })
 
       // everything ready
       if (allLoaded() && isDomReady) {
         each(handlers.ALL, function (fn) {
-          one(fn);
+          one(fn)
         });
       }
     });
@@ -304,24 +305,24 @@
 
   function scriptTag(src, callback) {
 
-    var s = doc.createElement('script');
+    var s = doc.createElement('script')
 
-    s.type = 'text/' + (src.type || 'javascript');
-    s.src = src.src || src;
-    s.async = false;
+    s.type = 'text/' + (src.type || 'javascript')
+    s.src = src.src || src
+    s.async = false
 
     s.onreadystatechange = s.onload = function () {
 
-      var state = s.readyState;
+      var state = s.readyState
 
       if (!callback.done && (!state || /loaded|complete/.test(state))) {
-        callback.done = true;
-        callback();
+        callback.done = true
+        callback()
       }
-    };
+    }
 
     // use body if available. more safe in IE
-    (doc.body || head).appendChild(s);
+    ;(doc.body || head).appendChild(s)
   }
 
   /*
@@ -331,19 +332,19 @@
 
   function fireReady() {
     if (!isDomReady) {
-      isDomReady = true;
+      isDomReady = true
       each(domWaiters, function (fn) {
-        one(fn);
-      });
+        one(fn)
+      })
     }
   }
 
   // W3C
   if (window.addEventListener) {
-    doc.addEventListener("DOMContentLoaded", fireReady, false);
+    doc.addEventListener("DOMContentLoaded", fireReady, false)
 
     // fallback. this is always called
-    window.addEventListener("load", fireReady, false);
+    window.addEventListener("load", fireReady, false)
 
     // IE
     } else if (window.attachEvent) {
@@ -351,15 +352,15 @@
       // for iframes
       doc.attachEvent("onreadystatechange", function ()  {
         if (doc.readyState === "complete" ) {
-          fireReady();
+          fireReady()
         }
       });
 
       // avoid frames with different domains issue
-      var frameElement = 1;
+      var frameElement = 1
 
       try {
-          frameElement = window.frameElement;
+          frameElement = window.frameElement
 
       } catch (e) {
         //
@@ -370,26 +371,26 @@
         (function () {
           try {
             head.doScroll("left");
-            fireReady();
+            fireReady()
 
           } catch (e) {
-            setTimeout(arguments.callee, 1);
-            return;
+            setTimeout(arguments.callee, 1)
+            return
           }
-        })();
+        })()
       }
 
       // fallback
-      window.attachEvent("onload", fireReady);
+      window.attachEvent("onload", fireReady)
     }
 
     // enable document.readyState for Firefox <= 3.5
     if (!doc.readyState && doc.addEventListener) {
-      doc.readyState = "loading";
+      doc.readyState = "loading"
       doc.addEventListener("DOMContentLoaded", handler = function () {
-        doc.removeEventListener("DOMContentLoaded", handler, false);
-        doc.readyState = "complete";
-      }, false);
+        doc.removeEventListener("DOMContentLoaded", handler, false)
+        doc.readyState = "complete"
+      }, false)
     }
 
     /*
@@ -399,10 +400,10 @@
         https://github.com/headjs/headjs/issues/closed#issue/83
     */
     setTimeout(function () {
-      isHeadReady = true;
+      isHeadReady = true
       each(queue, function (fn) {
-        fn();
-      });
-    }, 300);
+        fn()
+      })
+    }, 300)
 
-})(document);
+})(document)
