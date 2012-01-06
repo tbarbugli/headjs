@@ -32,7 +32,7 @@
   // Method 1: simply load and let browser take care of ordering
   if (isAsync) {
 
-    api.js = function() {
+    api.js = function () {
 
       var args = arguments,
           fn = args[args.length -1],
@@ -42,13 +42,13 @@
         fn = null;
       }
 
-      each(args, function(el, i) {
+      each(args, function (el, i) {
 
         if (el != fn) {
           el = getScript(el);
           els[el.name] = el;
 
-          load(el, fn && i == args.length -2 ? function() {
+          load(el, fn && i == args.length -2 ? function () {
             if (allLoaded(els)) {
               one(fn);
             }
@@ -72,7 +72,7 @@
 
       // wait for a while. immediate execution causes some browsers to ignore caching
       if (!isHeadReady) {
-        queue.push(function()  {
+        queue.push(function () {
           api.js.apply(null, args);
         });
         return api;
@@ -82,14 +82,14 @@
       if (next) {
 
         // load
-        each(rest, function(el) {
+        each(rest, function (el) {
           if (!isFunc(el)) {
             preload(getScript(el));
           }
         });
 
         // execute
-        load(getScript(args[0]), isFunc(next) ? next : function() {
+        load(getScript(args[0]), isFunc(next) ? next : function () {
           api.js.apply(null, rest);
         });
 
@@ -104,7 +104,7 @@
   }
 
 
-  api.ready = function(key, fn) {
+  api.ready = function (key, fn) {
 
     // DOM ready check: head.ready(document, function() { });
     if (key == doc) {
@@ -242,7 +242,7 @@
 
     script.state = PRELOADED;
 
-    each(script.onpreload, function(el) {
+    each(script.onpreload, function (el) {
       el.call();
     });
   }
@@ -254,7 +254,7 @@
       script.state = PRELOADING;
       script.onpreload = [];
 
-      scriptTag({ src: script.url, type: 'cache'}, function()  {
+      scriptTag({ src: script.url, type: 'cache'}, function ()  {
         onPreload(script);
       });
     }
@@ -349,7 +349,7 @@
     } else if (window.attachEvent) {
 
       // for iframes
-      doc.attachEvent("onreadystatechange", function()  {
+      doc.attachEvent("onreadystatechange", function ()  {
         if (doc.readyState === "complete" ) {
           fireReady();
         }
@@ -367,7 +367,7 @@
 
       if (!frameElement && head.doScroll) {
 
-        (function() {
+        (function () {
           try {
             head.doScroll("left");
             fireReady();
@@ -398,9 +398,9 @@
 
         https://github.com/headjs/headjs/issues/closed#issue/83
     */
-    setTimeout(function() {
+    setTimeout(function () {
       isHeadReady = true;
-      each(queue, function(fn) {
+      each(queue, function (fn) {
         fn();
       });
     }, 300);
