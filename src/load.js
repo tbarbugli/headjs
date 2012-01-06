@@ -12,14 +12,13 @@
       isHeadReady,
       isDomReady,
       domWaiters = [],
-      queue = [],        // waiters for the "head ready" event
+      queue = [],        // waiters for the 'head ready' event
       handlers = {},     // user functions waiting for events
       scripts = {},      // loadable scripts in different states
-      isAsync = doc.createElement("script").async === true || "MozAppearance" in doc.documentElement.style || window.opera
-
+      isAsync = doc.createElement('script').async === true || 'MozAppearance' in doc.documentElement.style || window.opera
 
   /*** public API ***/
-  var head_var = window.head_conf && head_conf.head || "head",
+  var head_var = window.head_conf && head_conf.head || 'head',
       api = window[head_var] = (window[head_var] || function() { api.ready.apply(null, arguments); })
 
   // states
@@ -28,27 +27,26 @@
       LOADING = 3,
       LOADED = 4
 
-
   // Method 1: simply load and let browser take care of ordering
   if (isAsync) {
 
     api.js = function () {
 
-      var args = arguments,
-          fn = args[args.length -1],
+      var args = [].slice.apply(arguments),
+          fn = args[args.length - 1],
           els = {}
 
       if (!isFunc(fn)) {
         fn = null
       }
 
-      each(args, function (el, i) {
+      each(args,function (el, i) {
 
         if (el != fn) {
           el = getScript(el)
           els[el.name] = el
 
-          load(el, fn && i == args.length -2 ? function () {
+          load(el, fn && i == args.length - 2 ? function () {
             if (allLoaded(els)) {
               one(fn)
             }
@@ -119,7 +117,7 @@
     // shift arguments
     if (isFunc(key)) {
       fn = key
-      key = "ALL"
+      key = 'ALL'
     }
 
     // make sure arguments are sane
@@ -136,10 +134,10 @@
     }
 
     var arr = handlers[key]
-    if (!arr) {
-      arr = handlers[key] = [fn]
-    } else {
+    if (arr) {
       arr.push(fn)
+    } else {
+      arr = handlers[key] = [fn]
     }
     return api
   };
@@ -155,7 +153,7 @@
     }
 
     if (api.feature) {
-      api.feature("domloaded", true)
+      api.feature('domloaded', true)
     }
   });
 
@@ -173,9 +171,9 @@
 
 
   function toLabel(url) {
-    var els = url.split("/"),
+    var els = url.split('/'),
         name = els[els.length -1],
-        i = name.indexOf("?")
+        i = name.indexOf('?')
 
     return i != -1 ? name.substring(0, i) : name
   }
@@ -341,17 +339,17 @@
 
   // W3C
   if (window.addEventListener) {
-    doc.addEventListener("DOMContentLoaded", fireReady, false)
+    doc.addEventListener('DOMContentLoaded', fireReady, false)
 
     // fallback. this is always called
-    window.addEventListener("load", fireReady, false)
+    window.addEventListener('load', fireReady, false)
 
     // IE
     } else if (window.attachEvent) {
 
       // for iframes
-      doc.attachEvent("onreadystatechange", function ()  {
-        if (doc.readyState === "complete" ) {
+      doc.attachEvent('onreadystatechange', function ()  {
+        if (doc.readyState === 'complete' ) {
           fireReady()
         }
       });
@@ -370,7 +368,7 @@
 
         (function () {
           try {
-            head.doScroll("left");
+            head.doScroll('left');
             fireReady()
 
           } catch (e) {
@@ -381,15 +379,15 @@
       }
 
       // fallback
-      window.attachEvent("onload", fireReady)
+      window.attachEvent('onload', fireReady)
     }
 
     // enable document.readyState for Firefox <= 3.5
     if (!doc.readyState && doc.addEventListener) {
-      doc.readyState = "loading"
-      doc.addEventListener("DOMContentLoaded", handler = function () {
-        doc.removeEventListener("DOMContentLoaded", handler, false)
-        doc.readyState = "complete"
+      doc.readyState = 'loading'
+      doc.addEventListener('DOMContentLoaded', handler = function () {
+        doc.removeEventListener('DOMContentLoaded', handler, false)
+        doc.readyState = 'complete'
       }, false)
     }
 
