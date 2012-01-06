@@ -6,7 +6,7 @@
 
     http://headjs.com
 */
-(function (doc) {
+;(function (doc) {
 
   var html = doc.documentElement,
       conf = {
@@ -35,7 +35,6 @@
     html.className = html.className.replace(re, '');
   }
 
-  // TODO: Replace with ECMA-262 equivalent
   function each(arr, fn) {
     for (var i = 0, arr_length = arr.length; i < arr_length; i++) {
       fn.call(arr, arr[i], i);
@@ -134,13 +133,34 @@
     }
 
     // HTML5 support
-    each("abbr|article|aside|audio|canvas|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video".split("|"), function (el) {
-      doc.createElement(el);
-    });
+    [ "abbr"
+    , "article"
+    , "aside"
+    , "audio"
+    , "canvas"
+    , "details"
+    , "figcaption"
+    , "figure"
+    , "footer"
+    , "header"
+    , "hgroup"
+    , "mark"
+    , "meter"
+    , "nav"
+    , "output"
+    , "progress"
+    , "section"
+    , "summary"
+    , "time"
+    , "video"
+    ]. each(function (el) {
+      doc.createElement(el)
+    })
+
   }
 
   // CSS "router"
-  each(location.pathname.split("/"), function (el, i) {
+  location.pathname.split('/').each(function (el, i) {
 
     if (this.length > 2 && this[i + 1] !== undefined) {
       if (i) {
@@ -160,7 +180,7 @@
         pushClass("root" + conf.section);
       }
     }
-  });
+  })
 
 
   // screen resolution: w-100, lt-480, lt-1024 ...
@@ -173,7 +193,7 @@
     // add new ones
     pushClass("w-" + Math.round(w / 100) * 100);
 
-    each(conf.screens, function (width) {
+    conf.screens.each(function (width) {
       if (w <= width) {
         pushClass("lt-" + width);
       }
