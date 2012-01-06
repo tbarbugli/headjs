@@ -43,7 +43,7 @@
   }
 
   if (!Array.prototype.forEach) {
-    Array.prototype.forEach = function (fn, thisArg) {
+    Array.prototype.forEach = Array.prototype.each = function (fn, thisArg) {
       var T,
           k = 0,
           O = Object(this),
