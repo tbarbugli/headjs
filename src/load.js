@@ -344,64 +344,64 @@
     // fallback. this is always called
     window.addEventListener('load', fireReady, false)
 
-    // IE
-    } else if (window.attachEvent) {
+  // IE
+  } else if (window.attachEvent) {
 
-      // for iframes
-      doc.attachEvent('onreadystatechange', function ()  {
-        if (doc.readyState === 'complete' ) {
+    // for iframes
+    doc.attachEvent('onreadystatechange', function ()  {
+      if (doc.readyState === 'complete' ) {
+        fireReady()
+      }
+    });
+
+    // avoid frames with different domains issue
+    var frameElement = 1
+
+    try {
+        frameElement = window.frameElement
+
+    } catch (e) {
+      //
+    }
+
+    if (!frameElement && head.doScroll) {
+
+      (function () {
+        try {
+          head.doScroll('left');
           fireReady()
+
+        } catch (e) {
+          setTimeout(arguments.callee, 1)
+          return
         }
-      });
-
-      // avoid frames with different domains issue
-      var frameElement = 1
-
-      try {
-          frameElement = window.frameElement
-
-      } catch (e) {
-        //
-      }
-
-      if (!frameElement && head.doScroll) {
-
-        (function () {
-          try {
-            head.doScroll('left');
-            fireReady()
-
-          } catch (e) {
-            setTimeout(arguments.callee, 1)
-            return
-          }
-        })()
-      }
-
-      // fallback
-      window.attachEvent('onload', fireReady)
+      })()
     }
 
-    // enable document.readyState for Firefox <= 3.5
-    if (!doc.readyState && doc.addEventListener) {
-      doc.readyState = 'loading'
-      doc.addEventListener('DOMContentLoaded', handler = function () {
-        doc.removeEventListener('DOMContentLoaded', handler, false)
-        doc.readyState = 'complete'
-      }, false)
-    }
+    // fallback
+    window.attachEvent('onload', fireReady)
+  }
 
-    /*
-        We wait for 300 ms before script loading starts. for some reason this is needed
-        to make sure scripts are cached. Not sure why this happens yet. A case study:
+  // enable document.readyState for Firefox <= 3.5
+  if (!doc.readyState && doc.addEventListener) {
+    doc.readyState = 'loading'
+    doc.addEventListener('DOMContentLoaded', handler = function () {
+      doc.removeEventListener('DOMContentLoaded', handler, false)
+      doc.readyState = 'complete'
+    }, false)
+  }
 
-        https://github.com/headjs/headjs/issues/closed#issue/83
-    */
-    setTimeout(function () {
-      isHeadReady = true
-      each(queue, function (fn) {
-        fn()
-      })
-    }, 300)
+  /*
+      We wait for 300 ms before script loading starts. for some reason this is needed
+      to make sure scripts are cached. Not sure why this happens yet. A case study:
+
+      https://github.com/headjs/headjs/issues/closed#issue/83
+  */
+  setTimeout(function () {
+    isHeadReady = true
+    each(queue, function (fn) {
+      fn()
+    })
+  }, 300)
 
 })(document)
