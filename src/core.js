@@ -11,28 +11,28 @@
   var html = doc.documentElement,
       conf = {
         screens: [320, 480, 640, 768, 1024, 1280, 1440, 1680, 1920],
-        section: "-section",
-        page: "-page",
-        head: "head"
+        section: '-section',
+        page: '-page',
+        head: 'head'
       },
-      klass = [];
+      klass = []
 
 
   if (window.head_conf) {
     for (var key in head_conf) {
       if (head_conf[key] !== undefined) {
-        conf[key] = head_conf[key];
+        conf[key] = head_conf[key]
       }
     }
   }
 
   function pushClass(name) {
-    klass[klass.length] = name;
+    klass[klass.length] = name
   }
 
   function removeClass(name) {
-    var re = new RegExp("\\b" + name + "\\b");
-    html.className = html.className.replace(re, '');
+    var re = new RegExp('\\b' + name + '\\b')
+    html.className = html.className.replace(re, '')
   }
 
   if (!Array.prototype.forEach) {
@@ -43,135 +43,135 @@
           len = O.length >>> 0; // Hack to convert O.length to a UInt32
 
       if (thisArg) {
-        T = thisArg;
+        T = thisArg
       }
 
       if (this == null) {
-        throw new TypeError("this is null or not defined");
+        throw new TypeError('this is null or not defined')
       }
 
-      if ({}.toString.call(fn) != "[object Function]") {
-        throw new TypeError(fn + " is not a function");
+      if ({}.toString.call(fn) != '[object Function]') {
+        throw new TypeError(fn + ' is not a function')
       }
 
       while (k < len) {
-        var kValue;
+        var kValue
 
         if (k in O) {
-          kValue = O[k];
-          fn.call(T, kValue, k, O);
+          kValue = O[k]
+          fn.call(T, kValue, k, O)
         }
-        k++;
+        k++
       }
-    };
+    }
   }
 
   // API
   var api = window[conf.head] = function () {
-    api.ready.apply(null, arguments);
-  };
+    api.ready.apply(null, arguments)
+  }
 
   api.feature = function (key, enabled, queue) {
 
     // internal: apply all classes
     if (!key) {
-      html.className += ' ' + klass.join( ' ' );
-      klass = [];
-      return;
+      html.className += ' ' + klass.join( ' ' )
+      klass = []
+      return
     }
 
     if (Object.prototype.toString.call(enabled) == '[object Function]') {
-      enabled = enabled.call();
+      enabled = enabled.call()
     }
 
-    pushClass((enabled ? '' : 'no-') + key);
-    api[key] = !!enabled;
+    pushClass((enabled ? '' : 'no-') + key)
+    api[key] = !!enabled
 
     // apply class to HTML element
     if (!queue) {
-      removeClass('no-' + key);
-      removeClass(key);
-      api.feature();
+      removeClass('no-' + key)
+      removeClass(key)
+      api.feature()
     }
 
-    return api;
-  };
+    return api
+  }
 
   // browser type & version
-  var ua = navigator.userAgent.toLowerCase();
+  var ua = navigator.userAgent.toLowerCase()
 
   ua = /(webkit)[ \/]([\w.]+)/.exec( ua ) ||
        /(opera)(?:.*version)?[ \/]([\w.]+)/.exec( ua ) ||
        /(msie) ([\w.]+)/.exec( ua ) ||
-       !/compatible/.test( ua ) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) || [];
+       !/compatible/.test( ua ) && /(mozilla)(?:.*? rv:([\w.]+))?/.exec( ua ) || []
 
 
   if (ua[1] == 'msie') {
-    ua[1] = 'ie';
-    ua[2] = document.documentMode || ua[2];
+    ua[1] = 'ie'
+    ua[2] = document.documentMode || ua[2]
   }
 
-  pushClass(ua[1]);
+  pushClass(ua[1])
 
-  api.browser = { version: ua[2] };
-  api.browser[ua[1]] = true;
+  api.browser = { version: ua[2] }
+  api.browser[ua[1]] = true
 
   // IE specific
   if (api.browser.ie) {
 
-    pushClass("ie" + parseFloat(ua[2]));
+    pushClass('ie' + parseFloat(ua[2]))
 
     // IE versions
     for (var ver = 3; ver < 11; ver++) {
-      if (parseFloat(ua[2]) < ver) { pushClass("lt-ie" + ver); }
+      if (parseFloat(ua[2]) < ver) { pushClass('lt-ie' + ver); }
     }
 
     // HTML5 support
-    [ "abbr"
-    , "article"
-    , "aside"
-    , "audio"
-    , "canvas"
-    , "details"
-    , "figcaption"
-    , "figure"
-    , "footer"
-    , "header"
-    , "hgroup"
-    , "mark"
-    , "meter"
-    , "nav"
-    , "output"
-    , "progress"
-    , "section"
-    , "summary"
-    , "time"
-    , "video"
+    [ 'abbr'
+    , 'article'
+    , 'aside'
+    , 'audio'
+    , 'canvas'
+    , 'details'
+    , 'figcaption'
+    , 'figure'
+    , 'footer'
+    , 'header'
+    , 'hgroup'
+    , 'mark'
+    , 'meter'
+    , 'nav'
+    , 'output'
+    , 'progress'
+    , 'section'
+    , 'summary'
+    , 'time'
+    , 'video'
     ]. each(function (el) {
       doc.createElement(el)
     })
 
   }
 
-  // CSS "router"
+  // CSS 'router'
   location.pathname.split('/').each(function (el, i) {
 
     if (this.length > 2 && this[i + 1] !== undefined) {
       if (i) {
-        pushClass(this.slice(1, i+1).join("-") + conf.section);
+        pushClass(this.slice(1, i+1).join('-') + conf.section)
       }
     } else {
 
       // pageId
-      var id = el || "index", index = id.indexOf(".");
+      var id = el || 'index', index = id.indexOf('.')
       if (index > 0) {
-        id = id.substring(0, index);
+        id = id.substring(0, index)
       }
-      html.id = id + conf.page;
+      html.id = id + conf.page
 
             // on root?
       if (!i) {
-        pushClass("root" + conf.section);
+        pushClass('root' + conf.section)
       }
     }
   })
@@ -179,26 +179,26 @@
 
   // screen resolution: w-100, lt-480, lt-1024 ...
   function screenSize() {
-    var w = window.outerWidth || html.clientWidth;
+    var w = window.outerWidth || html.clientWidth
 
     // remove earlier widths
-    html.className = html.className.replace(/ (w|lt)-\d+/g, "");
+    html.className = html.className.replace(/ (w|lt)-\d+/g, '')
 
     // add new ones
-    pushClass("w-" + Math.round(w / 100) * 100);
+    pushClass('w-' + Math.round(w / 100) * 100)
 
     conf.screens.each(function (width) {
       if (w <= width) {
-        pushClass("lt-" + width);
+        pushClass('lt-' + width)
       }
-    });
+    })
 
-    api.feature();
+    api.feature()
   }
 
-  screenSize();
-  window.onresize = screenSize;
+  screenSize()
+  window.onresize = screenSize
 
-  api.feature("js", true).feature();
+  api.feature('js', true).feature()
 
-})(document);
+})(document)
