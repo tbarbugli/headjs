@@ -6,7 +6,7 @@
 
     http://headjs.com
 */
-(function () {
+;(function () {
   /*
       To add a new test:
 

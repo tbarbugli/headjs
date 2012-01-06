@@ -35,12 +35,6 @@
     html.className = html.className.replace(re, '');
   }
 
-  function each(arr, fn) {
-    for (var i = 0, arr_length = arr.length; i < arr_length; i++) {
-      fn.call(arr, arr[i], i);
-    }
-  }
-
   if (!Array.prototype.forEach) {
     Array.prototype.forEach = Array.prototype.each = function (fn, thisArg) {
       var T,
