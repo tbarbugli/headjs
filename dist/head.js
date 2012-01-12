@@ -411,17 +411,30 @@
 
         // make sure arguments are sane
         if (typeof key != 'string' || !isFunc(fn)) { return api; }
+        key = key.replace(/\s/g, "");
+        var keys = key.split(",");
+        if (typeof keys == 'string') { keys = [key] };
 
-        var script = scripts[key];
         
-        // script already loaded --> execute and return
-        if (script && script.state == LOADED || key == 'ALL' && allLoaded() && isDomReady) {
+        // everything is loaded and waiting for it
+        if (key == 'ALL' && allLoaded() && isDomReady) {
             one(fn);
             return api;
         }
 
-        var arr = handlers[key];
-        if (!arr) { arr = handlers[key] = [fn]; }
+        for (var i=0; i<keys.length;i++){
+            if (keys.length == 0){
+                one(fn);
+                return api;
+            }
+            var script = scripts[keys[i]];
+            if (script && script.state == LOADED) {
+                removeByValue(keys, keys[i]);
+            }
+        }
+
+        var arr = handlers[keys];
+        if (!arr) { arr = handlers[keys] = [fn]; }
         else { arr.push(fn); }
         return api;
     };
@@ -496,6 +509,15 @@
         }
     }
 
+    function removeByValue(arr, val) {
+        for(var i=0; i<arr.length; i++) {
+            if(arr[i] == val) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+    }
+
     function isFunc(el) {
         return Object.prototype.toString.call(el) == '[object Function]';
     }
@@ -561,9 +583,18 @@
             if (callback) { callback(); }
 
             // handlers for this script
-            each(handlers[script.name], function(fn) {
-                one(fn);
-            });
+            for (keys in handlers) {
+                var keys = keys.split(",");
+                if (keys == script.name){
+                    each(handlers[keys], function(fn) {
+                        one(fn);
+                    });
+                }
+                var fn = handlers[keys];
+                delete handlers[keys];
+                removeByValue(keys, script.name);
+                handlers[keys] = fn;
+            }
 
             // everything ready
             if (allLoaded() && isDomReady) {
