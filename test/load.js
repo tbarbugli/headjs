@@ -76,13 +76,40 @@ asyncTest('nested load', function () {
         
         head.js(s + "/test4?value=1&require=dep6", function() {
             start();
-            equals(test4, 1); 
+            equals(test4, 1);
         });
         
     });
 
 });
 
+asyncTest('wait for multiple scripts', 5, function () {
+
+    head.ready("script1", function() {
+        equals(script_test1, 4);
+    });
+
+    head.ready("script1,script2,script3", function() {
+        equals(script_test1, 4);
+        equals(script_test2, 3);
+        equals(script_test3, 2);
+        ok(script_test1 && script_test2 && script_test3, "all ready");
+    });
+
+    head.ready("script1,script2,script3,not-loaded", function() {
+        equals(1, 0, "this callback should never run");
+    });
+
+    head.js(
+        {script1: s + "/script_test1?value=4&time=300"},
+        {script2: s + "/script_test2?value=3&time=200"},
+        {script3: s + "/script_test3?value=2&time=100"},
+        {script4: s + "/script_test4?value=1&time=750"},
+        function() {
+          start();
+        }
+    );
+});
 
 asyncTest("document ready", function() {
     head.ready(document, function() {
